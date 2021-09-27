@@ -22,10 +22,10 @@ class P3D_Q2D_Rel:
         self.v = v              # system speed
         self.dims = dims        # state dimensions
         self.nx = len(dims)     # number of state dimensions
-        self.nu = 1             #
-        self.nd = 4
-        self.pdim = [0,1]
-        self.vdim = [2]
+        # self.nu = 1             #
+        # self.nd = 4
+        # self.pdim = [0,1]
+        # self.vdim = [2]
         self.uMode = uMode      # controller acting as maximizer or minimizer
         self.dMode = dMode      # disturbing agent acting as minimizer or maximizer
 
