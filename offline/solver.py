@@ -19,7 +19,7 @@ https://github.com/SFU-MARS/optimized_dp.git in optimized_dp/solver.py
 """
 
 def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
-             plot_option, convergeThresh=0.1, accuracy="low"):
+             plot_option, convergeThresh=0.05, accuracy="low"):
     print("Welcome to optimized_dp \n")
     if type(multiple_value) == list:
         init_value = multiple_value[0]
@@ -126,7 +126,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
     
         ## EDITED CODE: Terminate if converged
-        compare = np.max(np.abs(V_1.asnumpy()-prev))
+        compare = np.max(np.abs(V_1.asnumpy()-prev)/prev)
         print("Maximum change at iteration: {:.5f}".format(compare))
         if compare < convergeThresh:
             break

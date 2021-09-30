@@ -10,9 +10,11 @@ https://github.com/HJReachability/helperOC.git in helperOC/dynSys/@P3D_Q2D_Rel
 """
 
 
-class P3D_Q2D_Rel:
+class P5D_Dubins_Rel:
     def __init__(self, x=[0,0,0,0,0], uMin=[-0.5,-6], uMax=[0.5,6], pMin=[-1.5], pMax=[1.5],
                 dMin=[-0.02,-0.02,0,-0.02,-0.2], dMax=[0.02,0.02,0,0.02,0.2], v=0.1, dims=[0,1,2,3,4], uMode="min", dMode="max"):
+        # System decomposition not possible due to coupling of states
+        
         self.x = x              # state vector
         self.uMin = uMin        # control input (angular velocity) minimum
         self.uMax = uMax        # control input (angular velocity) maximum
@@ -24,6 +26,8 @@ class P3D_Q2D_Rel:
         self.dims = dims        # state dimensions
         self.uMode = uMode      # controller acting as maximizer or minimizer
         self.dMode = dMode      # disturbing agent acting as minimizer or maximizer
+
+        
 
     def opt_ctrl(self, t, state, spat_deriv):
         opt_a = hcl.scalar(self.uMax[0], "opt_a")
@@ -38,11 +42,11 @@ class P3D_Q2D_Rel:
                 opt_alpha[0] = hcl.scalar(self.uMin[1], "opt_alpha")
         with hcl.elif_(spat_deriv[2] < 0):
             with hcl.if_(self.uMode == "max"):
-                opt_a[0] = hcl.scalar(self.uMin, "opt_a")
+                opt_a[0] = hcl.scalar(self.uMin[0], "opt_a")
                 opt_alpha[0] = hcl.scalar(self.uMin[1], "opt_alpha")
         return (in1[0],in2[0],in3[0],opt_a[0],opt_alpha[0])
 
-    def opt_dstb(self, t, state, spat_deriv):
+    def opt_dstb(self, spat_deriv):
         """
         :param spat_deriv: tuple of spatial derivative in all dimensions
         :return: a tuple of optimal disturbances
@@ -52,7 +56,7 @@ class P3D_Q2D_Rel:
         d3 = hcl.scalar(self.pMax[0], "d3")
         d4 = hcl.scalar(self.dMax[3], "d4")
         d5 = hcl.scalar(self.dMax[4], "d5")
-
+        
         with hcl.if_(self.dMode == "max"):
             with hcl.if_(spat_deriv[0]<0):
                 d1[0] = hcl.scalar(self.dMin[0],"d1")

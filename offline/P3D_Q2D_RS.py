@@ -24,7 +24,6 @@ from proj import *
 
 # Solver core
 from solver import HJSolver
-
 import math
 
 ### \P3D_Q2D_RS
@@ -88,7 +87,7 @@ po2 = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2],
 # in FaSTrack we want to take the max with the cost function l(x) over time
 compMethods = { "PrevSetsMode": "maxVWithVInit"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
-data = HJSolver(dynamics, g, target, tau, compMethods, po2,0.1,"medium") # The main function to run reachability code
+data = HJSolver(dynamics, g, target, tau, compMethods, po2,0.05,"medium") # The main function to run reachability code
 
 # Plot converged cost
 [g2D, data02D] = proj(g,data,[0,0,1],'min')
@@ -99,5 +98,5 @@ surf = ax.plot_surface(g2D.vs[0], g2D.vs[1], np.sqrt(data02D), rstride=1, cstrid
 
 # Get TEB
 TEB = np.min(np.sqrt(data))+small_number
-print(TEB + 0.1)
+print(TEB*1.05)
 # plt.show()
