@@ -12,6 +12,7 @@ from Shapes.ShapesFunctions import *
 
 # Specify the  file that includes dynamic systems
 from dynamics.P3D_Q2D_Rel import *
+from deriv.gradient3D import Gradient3D
 
 # Plot options
 from plot_options import *
@@ -99,4 +100,14 @@ surf = ax.plot_surface(g2D.vs[0], g2D.vs[1], np.sqrt(data02D), rstride=1, cstrid
 # Get TEB
 TEB = np.min(np.sqrt(data))+small_number
 print(TEB*1.05)
+
+print(data[0,0,0])
+
+deriv1 = hcl.asarray(np.zeros(data.shape))
+deriv2 = hcl.asarray(np.zeros(data.shape))
+deriv3 = hcl.asarray(np.zeros(data.shape))
+computeGradient = Gradient3D(g)
+computeGradient(hcl.asarray(data),deriv1,deriv2,deriv3)
+spat_derivs = [deriv1.asnumpy(),deriv2.asnumpy(),deriv3.asnumpy()]
+print(spat_derivs[0][0,0,0])
 # plt.show()

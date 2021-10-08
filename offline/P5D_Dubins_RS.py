@@ -13,6 +13,7 @@ from Shapes.ShapesFunctions import *
 
 # Specify the  file that includes dynamic systems
 from dynamics.P5D_Dubins_Rel import *
+from deriv.gradient5D import computGradient
 
 # Plot options
 from plot_options import *
@@ -57,3 +58,5 @@ data = HJSolver(my_car, g, data0, tau, compMethods, po,accuracy="low",convergeTh
 
 TEB = np.sqrt(np.min((data)))*(1+5*thresh)
 print(TEB)
+
+print(computGradient(g,data).asnumpy())
