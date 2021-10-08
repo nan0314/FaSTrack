@@ -1,6 +1,6 @@
 # Reachability
 
-This repository contains code inspired by some of the incredible work on reachability coming out of the Berkeley Hybrid Systems Lab, in particular [FaSTrack](https://arxiv.org/abs/2102.07039) and [this paper on UAV platooning](https://arxiv.org/abs/1602.08150). 
+This repository contains code inspired by some of the incredible work on reachability coming out of the Berkeley Hybrid Systems Lab, in particular [FaSTrack](https://arxiv.org/abs/2102.07039) and [this paper on UAV platooning](https://arxiv.org/abs/1602.08150). I'm hoping to understand the contnet in the papers enough to replicate the results with different systems.
 
 ## Package List
 
