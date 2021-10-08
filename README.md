@@ -29,10 +29,8 @@ These directions assume you have completed installation of Python 3 with pip and
 * Clone this repository into your workspace
 * Run the following commands to clone the optimized_dp submodule:
 
-`cd offline\optimized_dp`
-
+`cd offline/optimized_dp`
 `git submodule init`
-
 `git submodule update`
 
 The repository should be ready to use.
