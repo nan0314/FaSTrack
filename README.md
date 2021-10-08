@@ -9,6 +9,7 @@ This repository is split into two parts offline computations and online planning
 Offline
 - deriv - contains functions for spatial derivatives of different degree systems
 - dynamics - contains dynamics for various systems for reachability analysis
+
 Online
 - TODO
 
@@ -27,8 +28,11 @@ These directions assume you have completed installation of Python 3 with pip and
 * install numpy using the command `pip install numpy`
 * Clone this repository into your workspace
 * Run the following commands to clone the optimized_dp submodule:
+
 `cd offline\optimized_dp`
+
 `git submodule init`
+
 `git submodule update`
 
 The repository should be ready to use.
