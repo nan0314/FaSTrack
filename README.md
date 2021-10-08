@@ -29,9 +29,11 @@ These directions assume you have completed installation of Python 3 with pip and
 * Clone this repository into your workspace
 * Run the following commands to clone the optimized_dp submodule:
 
-`cd offline/optimized_dp`
-`git submodule init`
-`git submodule update`
+```
+cd offline/optimized_dp
+git submodule init
+git submodule update
+```
 
 The repository should be ready to use.
 
@@ -41,7 +43,10 @@ The repository should be ready to use.
 
 Run the following command from the offline directory to verify proper installation:
 
-`./P3D_Q2D_RS.py`
+```
+conda activate hcl-env
+./P3D_Q2D_RS.py 
+```
 
 ## TODO
 
