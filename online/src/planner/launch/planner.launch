@@ -1,0 +1,7 @@
+<launch>
+
+  <rosparam file="$(find planner)/config/map_attributes.yaml" />
+  
+  <node pkg="planner" name="planner_node" type="planner_node" output="screen"/>
+
+</launch>

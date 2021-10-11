@@ -95,7 +95,7 @@ data = HJSolver(dynamics, g, target, tau, compMethods, po2,0.05,"medium") # The 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 surf = ax.plot_surface(g2D.vs[0], g2D.vs[1], np.sqrt(data02D), rstride=1, cstride=1, antialiased=True)
-# plt.show()
+plt.show()
 
 # Get TEB
 TEB = np.min(np.sqrt(data))+small_number

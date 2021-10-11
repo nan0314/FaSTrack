@@ -1,2 +1,5 @@
 __pycache__/
 P3D_Q2D_RS.m
+.vscode
+devel
+build
