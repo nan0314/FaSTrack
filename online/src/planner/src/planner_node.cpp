@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     ros::Publisher map_pub = n.advertise<OccupancyGrid>("/map", 10,true);
     ros::Publisher path_pub = n.advertise<Path>("/path", 10,true);
 
-    // Ros parameters
+    // ROS parameters
     double w;
     double h;
     double dl;
@@ -36,17 +36,17 @@ int main(int argc, char **argv)
     arma::mat test(500,500,arma::fill::zeros);
     Map map(filepath,w,h,dl);
 
-    pair<double,double> start = {3,3};
+    pair<double,double> start = {0,0};
     pair<double,double> end = {25,25};
 
-    if (!map.is_valid(new Node(start.first,start.second,nullptr),{0,0})){
+    if (!map.is_valid(start.first,start.second,{0,0})){
       ROS_WARN_STREAM("START LOCATION IS INVALID!");
     }
-    if (!map.is_valid(new Node(end.first,end.second,nullptr),{0,0})){
+    if (!map.is_valid(end.first,end.second,{0,0})){
       ROS_WARN_STREAM("END LOCATION IS INVALID!");
     }
 
-    vector<pair<double,double>> path = map.rrt_connect(start,end,{.1,.1},1000);
+    vector<pair<double,double>> path = map.rrt_connect(start,end,{.1,.1},5000);
     OccupancyGrid map_msg = map.get_grid("map");
     Path path_msg = nav_path(path,"map");
 

@@ -36,6 +36,25 @@ namespace planner{
 
         return poses;
     }
+
+    vector<pair<double,double>> interpolate(const double &x0, const double &y0, const double &x1, const double &y1, const double &epsilon){
+
+        int N = (int)round(sqrt(pow(x0-x1,2) + pow(y0-y1,2)) / epsilon) + 1;
+        // x,y,z single step sizes for point interpolation
+        double dx = (x1-x0)/N;
+        double dy = (y1-y0)/N;
+
+        // interpolate points
+        vector<pair<double,double>> line;
+
+        for (int i = 1; i<N; i++){
+            line.push_back({x0 + i*dx, y0 + i*dy});
+        }
+
+        return line;
+
+    }
+
     
     
 
@@ -103,7 +122,7 @@ namespace planner{
     bool Map::new_config(Node* q, Node* q_near, Node* &q_new, const vector<double> &TEB){
         
         // make q_new by propogating from q_near toward q
-        double epsilon = *min_element(TEB.begin(),TEB.end()) * 1.9;
+        double epsilon = *min_element(TEB.begin(),TEB.end());
         double dist = q_near->distance(q);
 
         double dx = (q->x - q_near->x) * epsilon/dist;
@@ -113,18 +132,18 @@ namespace planner{
         
         // check if q_new is valid
 
-        return is_valid(q_new,TEB);
+        return is_valid(q_new->x,q_new->y,TEB);
 
     }
 
 
-    bool Map::is_valid(Node* q, const vector<double> &TEB){
+    bool Map::is_valid(const double &xin,const double &yin, const vector<double> &TEB){
 
         // get bounds of error checking
-        double xlow = q->x - TEB[0];
-        double xhigh = q->x + TEB[0];
-        double ylow = q->y - TEB[1];
-        double yhigh = q->y + TEB[1];
+        double xlow = xin - TEB[0];
+        double xhigh = xin + TEB[0];
+        double ylow = yin - TEB[1];
+        double yhigh = yin + TEB[1];
 
 
         // verify error bound is within map
@@ -142,10 +161,10 @@ namespace planner{
         }
 
         // convert bounds to indexes
-        int ix_low = (int)round(xlow/dl);
-        int ix_high = (int)round(xhigh/dl);
-        int iy_low = (int)round(ylow/dl);
-        int iy_high = (int)round(yhigh/dl);
+        int ix_low = (int)(xlow/dl);
+        int ix_high = (int)ceil(xhigh/dl);
+        int iy_low = (int)(ylow/dl);
+        int iy_high = (int)ceil(yhigh/dl);
 
         for (int x = ix_low; x <= ix_high; x++){
             if (grid(iy_low,x) > 0 or grid(iy_high,x) > 0){
@@ -164,7 +183,7 @@ namespace planner{
 
     string Map::extend(vector<Node*> &tree, Node* q, Node* &q_new, const vector<double> &TEB){
 
-        double epsilon = *min_element(TEB.begin(),TEB.end()) * 1.9;
+        double epsilon = *min_element(TEB.begin(),TEB.end());
 
         Node* q_near = nearest_neighbor(tree,q);
         
@@ -226,6 +245,9 @@ namespace planner{
 
         using std::vector;
 
+        // output
+        vector<pair<double,double>> path;
+
         // initialize trees
         Node start_node(start.first,start.second,nullptr);
         Node end_node(end.first,end.second,nullptr);
@@ -243,7 +265,7 @@ namespace planner{
                 if (connect(Tb,q_new,TEB) == "Reached"){
                     vector<pair<double,double>> path1 = Tb[Tb.size()-1]->get_path();
                     vector<pair<double,double>> path2 = q_new->get_path();
-                    vector<pair<double,double>> path;
+                    
 
                     path.reserve(path1.size() + path2.size());
                     if (path1[path1.size()-1].first == start.first and path1[path1.size()-1].second == start.second){
@@ -256,6 +278,8 @@ namespace planner{
                         path.insert(path.end(),path1.begin(),path1.end());
                     }
 
+                    path = smooth(path,TEB);
+
                     return path;
                 }
             }
@@ -264,8 +288,43 @@ namespace planner{
 
         }
 
-        vector<pair<double,double>> failure;
-        return failure;
+        return path;
+    }
+
+    vector<pair<double,double>> Map::smooth(const vector<pair<double,double>> &path, const vector<double> &TEB){
+
+        vector<pair<double,double>> smooth_path = {path[0]};
+        double epsilon = *min_element(TEB.begin(),TEB.end());
+
+        // set up smoothing points
+        pair<double,double> current = path[0];  // current smoothing vertex
+        pair<double,double> next;   // next possible smoothing vertex
+
+        // iterate through path checking for line of sight
+        for (int i = 1; i < path.size(); i++){
+
+            double x0 = current.first;
+            double y0 = current.second;
+            double x1 = path[i].first;
+            double y1 = path[i].second;
+
+            vector<pair<double,double>> line = interpolate(x0,y0,x1,y1,epsilon);
+
+            for (auto point : line){
+                if (!is_valid(point.first,point.second,TEB)){
+                    smooth_path.push_back(next);
+                    current = next;
+                }
+            }
+
+            next = path[i];
+        }
+
+        smooth_path.push_back(next);
+
+
+        std::reverse(smooth_path.begin(),smooth_path.end());
+        return smooth_path;
     }
 
 }

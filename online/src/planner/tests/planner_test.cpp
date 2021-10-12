@@ -16,8 +16,8 @@ TEST_CASE("Tests is_valid function","[is_valid]"){
     Map map(grid,2.5,2.5,0.5);
     Node q(1.5,1.5,nullptr);
 
-    bool result1 = map.is_valid(&q,{1.5,1.5});
-    bool result2 = map.is_valid(&q,{0,0});
+    bool result1 = map.is_valid(q.x,q.y,{1.5,1.5});
+    bool result2 = map.is_valid(q.x,q.y,{0,0});
 
     REQUIRE(result1==false);
     REQUIRE(result2==true);

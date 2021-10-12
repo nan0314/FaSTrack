@@ -22,6 +22,9 @@ namespace planner{
 
     Path nav_path(const vector<pair<double,double>> &path, const std::string &frame_id);
 
+    vector<pair<double,double>> interpolate(const double &x0, const double &y0,
+                                                const double &x1, const double &y1, const double &epsilon);
+
 
     struct Node{
         double x,y;
@@ -52,7 +55,7 @@ namespace planner{
 
         bool new_config(Node* q, Node* q_near, Node* &q_new, const vector<double> &TEB);
 
-        bool is_valid(Node* q, const vector<double> &TEB);
+        bool is_valid(const double &x, const double &y, const vector<double> &TEB);
 
         string extend(vector<Node*> &tree, Node* q, Node* &q_new, const vector<double> &TEB);
 
@@ -68,6 +71,7 @@ namespace planner{
 
         vector<pair<double,double>> rrt_connect(pair<double,double> start, pair<double,double> end, vector<double> TEB, int K);
 
+        vector<pair<double,double>> smooth(const vector<pair<double,double>> &path,const vector<double> &TEB);
     };
 
 

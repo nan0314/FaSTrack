@@ -212,11 +212,11 @@ install(DIRECTORY include/${PROJECT_NAME}/
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-catch_add_test(mapping_test
-  tests/mapping_test.cpp
+catch_add_test(planner_test
+  tests/planner_test.cpp
 )
 
-target_link_libraries(mapping_test
+target_link_libraries(planner_test
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${ARMADILLO_LIBRARIES}
