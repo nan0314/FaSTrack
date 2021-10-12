@@ -1,6 +1,9 @@
 #ifndef REACH_PLANNER_INCLUDE_GUARD_HPP
 #define REACH_PLANNER_INCLUDE_GUARD_HPP
 
+#include "geometry_msgs/PoseStamped.h"
+#include "nav_msgs/OccupancyGrid.h"
+#include "nav_msgs/Path.h"
 #include <armadillo>
 #include <cmath>
 #include <string>
@@ -11,8 +14,14 @@ namespace planner{
     using std::string;
     using std::pair;
     using std::vector;
+    using nav_msgs::OccupancyGrid;
+    using nav_msgs::Path;
+
 
     bool is_equal(const double &r, const double &l);
+
+    Path nav_path(const vector<pair<double,double>> &path, const std::string &frame_id);
+
 
     struct Node{
         double x,y;
@@ -38,6 +47,8 @@ namespace planner{
         
         
         public:
+
+        OccupancyGrid get_grid(string frame_id);
 
         bool new_config(Node* q, Node* q_near, Node* &q_new, const vector<double> &TEB);
 

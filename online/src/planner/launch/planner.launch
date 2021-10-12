@@ -3,5 +3,6 @@
   <rosparam file="$(find planner)/config/map_attributes.yaml" />
   
   <node pkg="planner" name="planner_node" type="planner_node" output="screen"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find planner)/config/default.rviz" />
 
 </launch>

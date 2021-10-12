@@ -6,10 +6,38 @@ namespace planner{
 
     using arma::mat;
     using std::string;
+    using nav_msgs::OccupancyGrid;
+    
 
     bool is_equal(const double &r, const double &l){
         return fabs(r - l) < 1e-5;
     }
+
+    Path nav_path(const vector<pair<double,double>> &path, const std::string &frame_id){
+
+        // initialize path and pose
+        geometry_msgs::PoseStamped pose;
+        nav_msgs::Path poses;
+        
+        poses.header.frame_id = frame_id;
+        pose.header.frame_id = frame_id;
+        pose.pose.orientation.x = 0;
+        pose.pose.orientation.y = 0;
+        pose.pose.orientation.z = 0;
+        pose.pose.orientation.w = 1;
+
+        // convert each waypoint in path to pose and add it to path
+        for (auto point : path){
+            pose.pose.position.x = point.first;
+            pose.pose.position.y = point.second;
+
+            poses.poses.push_back(pose);
+        }
+
+        return poses;
+    }
+    
+    
 
     /********************
      * Node functions
@@ -39,6 +67,28 @@ namespace planner{
     /*********************
      * Map Functions
     ********************/
+
+   OccupancyGrid Map::get_grid(string frame_id){
+
+        OccupancyGrid out;
+        out.header.frame_id = frame_id;
+        out.info.resolution = dl;
+        out.info.width = width/dl;
+        out.info.height = height/dl;
+
+        out.data.reserve(grid.n_elem);
+        for (int x = 0; x < grid.n_cols; x++) {
+            for (int y = 0; y < grid.n_rows; y++) {
+                const unsigned char intensity = (unsigned)grid(x,y);
+                out.data.push_back(intensity);
+
+            }
+        }
+
+
+        return out;
+
+    }
 
     Node Map::random_config(){
 

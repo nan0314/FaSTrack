@@ -11,12 +11,12 @@ circle = (xx-50)**2 + (yy-50)**2
 donut  = (circle < (2500 + 50))
 
 
-def circle_obstacle(x,y,r,map,num=10**8):
+def circle_obstacle(x,y,r,map,num=255):
     xx,yy = np.mgrid[-x:map.shape[0]-x, -y:map.shape[1]-y]
     mask = xx*xx + yy*yy <= r*r
     map[mask] = num
 
-def rect_obstacle(x1,x2,y1,y2,map,num=10**8):
+def rect_obstacle(x1,x2,y1,y2,map,num=255):
     xlow = min(x1,x2)
     xhigh = max(x1,x2)
     ylow = min(y1,y2)
@@ -47,6 +47,6 @@ rect_obstacle(420-6,426,280,380,map)
 imgplot = plt.imshow(map,cmap=None)
 plt.show()
 
-np.savetxt("../online/src/planner/config/map.csv", map, delimiter=",")
+np.savetxt("../online/src/planner/config/map.csv", map.T, delimiter=",")
 with open("../online/src/planner/config/map_attributes.yaml", "w") as fh:  
   yaml.dump(attributes, fh)
