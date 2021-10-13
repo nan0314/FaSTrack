@@ -45,8 +45,8 @@ rect_obstacle(370,470,324,336,map)
 rect_obstacle(420-6,426,280,380,map)
 
 imgplot = plt.imshow(map,cmap=None)
-plt.show()
+# plt.show()
 
-np.savetxt("../online/src/planner/config/map.csv", map.T, delimiter=",")
-with open("../online/src/planner/config/map_attributes.yaml", "w") as fh:  
+np.savetxt("../online/src/mapping/config/map.csv", map.T, delimiter=",")
+with open("../online/src/mapping/config/map_attributes.yaml", "w") as fh:  
   yaml.dump(attributes, fh)

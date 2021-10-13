@@ -1,0 +1,12 @@
+<launch>
+
+  <rosparam file="$(find mapping)/config/map_attributes.yaml" />
+  
+  <node pkg="mapping" name="mapping_node" type="mapping_node.py" output="screen"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mapping)/config/default.rviz" />
+
+
+  <include file="$(find controller)/launch/controller.launch" />
+
+
+</launch>

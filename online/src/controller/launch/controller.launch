@@ -1,0 +1,5 @@
+<launch>
+
+  <node pkg="controller" name="controller_node" type="controller_node" output="screen"/>
+
+</launch>
