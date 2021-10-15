@@ -38,15 +38,16 @@ def mapping():
 
 
     # ros params
-    r = 5
-    dl = 0.05
-    width = 25/dl
-    height = 25/dl
+    r = rospy.get_param("r")
+    resolution = rospy.get_param("resolution")
+    width = rospy.get_param("width")
+    height = rospy.get_param("height")
+    frame_id = rospy.get_param("frame_id")
 
     # initialize ros msgs
     map_msg = OccupancyGrid()
-    map_msg.header.frame_id = "map"
-    map_msg.info.resolution = dl
+    map_msg.header.frame_id = frame_id
+    map_msg.info.resolution = resolution
     map_msg.info.width = round(width)
     map_msg.info.height = round(height)
 
@@ -60,14 +61,12 @@ def mapping():
     while not rospy.is_shutdown():
 
         if pose_bool:
-            xlow = round(max(0,(pose.position.x - r)/dl))
-            xhigh = round(min(width-1,(pose.position.x + r)/dl))
-            ylow = round(max(0,(pose.position.y - r)/dl))
-            yhigh = round(min(height-1,(pose.position.y + r)/dl))
+            xlow = round(max(0,(pose.position.x - r)/resolution))
+            xhigh = round(min(width-1,(pose.position.x + r)/resolution))
+            ylow = round(max(0,(pose.position.y - r)/resolution))
+            yhigh = round(min(height-1,(pose.position.y + r)/resolution))
 
             percieved_map[xlow:xhigh,ylow:yhigh] = map[xlow:xhigh,ylow:yhigh]
-            # print(map[xlow:xhigh,ylow:yhigh])
-
             pose_bool = False
 
         # publish messages

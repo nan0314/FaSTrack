@@ -11,12 +11,12 @@ circle = (xx-50)**2 + (yy-50)**2
 donut  = (circle < (2500 + 50))
 
 
-def circle_obstacle(x,y,r,map,num=255):
+def circle_obstacle(x,y,r,map,num=100):
     xx,yy = np.mgrid[-x:map.shape[0]-x, -y:map.shape[1]-y]
     mask = xx*xx + yy*yy <= r*r
     map[mask] = num
 
-def rect_obstacle(x1,x2,y1,y2,map,num=255):
+def rect_obstacle(x1,x2,y1,y2,map,num=100):
     xlow = min(x1,x2)
     xhigh = max(x1,x2)
     ylow = min(y1,y2)

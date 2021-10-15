@@ -1,8 +1,11 @@
 <launch>
 
-  <rosparam file="$(find planner)/config/map_attributes.yaml" />
+  <rosparam file="$(find planner)/config/plan_params.yaml" />
   
   <node pkg="planner" name="planner_node" type="planner_node" output="screen"/>
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find planner)/config/default.rviz" />
+
+  <include file="$(find mapping)/launch/mapping.launch" >
+    <arg name="rviz_arg" value="-d $(find planner)/config/default.rviz" />
+  </include>
 
 </launch>

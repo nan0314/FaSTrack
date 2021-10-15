@@ -5,6 +5,8 @@
 
 int main(int argc, char **argv)
 {
+    using std::string;
+    using std::vector;
     using visualization_msgs::Marker;
     using visualization_msgs::MarkerArray;
 
@@ -16,6 +18,16 @@ int main(int argc, char **argv)
     ros::Publisher pose_pub = n.advertise<MarkerArray>("/pose", 10,true);
 
     // ROS parameters
+    vector<double> start;
+    vector<double> model_size;
+    vector<double> B;
+    string frame_id;
+
+
+    n.getParam("start", start);
+    n.getParam("model_size", model_size);
+    n.getParam("B", B);
+    n.getParam("frame_id",frame_id);
 
 
     // initialize messages
@@ -23,23 +35,29 @@ int main(int argc, char **argv)
     Marker vehicle;
     Marker TEB;
 
-    vehicle.header.frame_id = "map";
+    vehicle.header.frame_id = frame_id;
     vehicle.id = 0;
     vehicle.type = 1;
-    vehicle.pose.position.x = 3;
-    vehicle.pose.position.y = 3;
-    vehicle.scale.x = 0.05;
-    vehicle.scale.y = 0.05;
-    vehicle.color.b = 1;
-    vehicle.color.a = 1;
+    vehicle.pose.position.x = start[0];
+    vehicle.pose.position.y = start[1];
+    vehicle.scale.x = model_size[0];
+    vehicle.scale.y = model_size[1];
+    vehicle.scale.z = 0.05;
+    vehicle.color.r = 0.0;
+    vehicle.color.g = 0.0;
+    vehicle.color.b = 1.0;
+    vehicle.color.a = 1.0;
 
-    TEB.header.frame_id = "map";
+    TEB.header.frame_id = frame_id;
     TEB.id = 1;
     TEB.type = 1;
     TEB.pose = vehicle.pose;
-    TEB.scale.x = 0.1;
-    TEB.scale.y = 0.1;
-    TEB.color.r = 1;
+    TEB.scale.x = model_size[0] + B[0];
+    TEB.scale.y = model_size[1] + B[1];
+    TEB.scale.z = 0.025;
+    TEB.color.r = 1.0;
+    TEB.color.g = 0.0;
+    TEB.color.b = 0.0;
     TEB.color.a = 0.5;
     
     // set publishing frequency

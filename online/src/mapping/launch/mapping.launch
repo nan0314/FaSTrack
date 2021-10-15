@@ -1,9 +1,11 @@
 <launch>
 
+  <arg name="rviz_arg" default="-d $(find mapping)/config/default.rviz" />
+
   <rosparam file="$(find mapping)/config/map_attributes.yaml" />
   
   <node pkg="mapping" name="mapping_node" type="mapping_node.py" output="screen"/>
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mapping)/config/default.rviz" />
+  <node name="rviz" pkg="rviz" type="rviz" args="$(arg rviz_arg)" />
 
 
   <include file="$(find controller)/launch/controller.launch" />

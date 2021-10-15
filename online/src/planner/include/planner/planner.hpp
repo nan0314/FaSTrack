@@ -42,7 +42,7 @@ namespace planner{
 
     class Map{
 
-        double width, height, dl;
+        double width, height, resolution;
         mat grid;
 
         Node random_config();
@@ -63,15 +63,19 @@ namespace planner{
 
         Node* nearest_neighbor(vector<Node*> &tree, Node* q);
 
-        Map(mat grid, double w, double h, double dl);
+        Map(mat grid, double w, double h, double resolution);
 
-        Map(string filepath, double w, double h, double dl);
+        Map(string filepath, double w, double h, double resolution);
+
+        Map(const OccupancyGrid &map);
 
         mat get_grid();
 
         vector<pair<double,double>> rrt_connect(pair<double,double> start, pair<double,double> end, vector<double> TEB, int K);
 
         vector<pair<double,double>> smooth(const vector<pair<double,double>> &path,const vector<double> &TEB);
+
+        bool valid_path(const vector<pair<double,double>> &path, const vector<double> &TEB);
     };
 
 

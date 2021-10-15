@@ -91,9 +91,9 @@ namespace planner{
 
         OccupancyGrid out;
         out.header.frame_id = frame_id;
-        out.info.resolution = dl;
-        out.info.width = width/dl;
-        out.info.height = height/dl;
+        out.info.resolution = resolution;
+        out.info.width = width;
+        out.info.height = height;
 
         out.data.reserve(grid.n_elem);
         for (int x = 0; x < grid.n_cols; x++) {
@@ -112,8 +112,8 @@ namespace planner{
     Node Map::random_config(){
 
 
-        double x = (double)rand()/RAND_MAX * width;
-        double y = (double)rand()/RAND_MAX * height;
+        double x = (double)rand()/RAND_MAX * width*resolution;
+        double y = (double)rand()/RAND_MAX * height*resolution;
 
         return Node(x,y,nullptr);
 
@@ -153,18 +153,18 @@ namespace planner{
         if (ylow < 0){
             ylow = 0;
         }
-        if (xhigh > width - dl){
-            xhigh = width - dl;
+        if (xhigh > width*resolution - resolution){
+            xhigh = width*resolution - resolution;
         }
-        if (yhigh > height - dl){
-            yhigh = height - dl;
+        if (yhigh > height*resolution - resolution){
+            yhigh = height*resolution - resolution;
         }
 
         // convert bounds to indexes
-        int ix_low = (int)(xlow/dl);
-        int ix_high = (int)ceil(xhigh/dl);
-        int iy_low = (int)(ylow/dl);
-        int iy_high = (int)ceil(yhigh/dl);
+        int ix_low = (int)(xlow/resolution);
+        int ix_high = (int)ceil(xhigh/resolution);
+        int iy_low = (int)(ylow/resolution);
+        int iy_high = (int)ceil(yhigh/resolution);
 
         for (int x = ix_low; x <= ix_high; x++){
             if (grid(iy_low,x) > 0 or grid(iy_high,x) > 0){
@@ -231,10 +231,22 @@ namespace planner{
         return nearest;
     }
 
-    Map::Map(mat grid, double w, double h, double dl) : width(w), height(h), dl(dl), grid(grid) {}
+    Map::Map(mat grid, double w, double h, double resolution) : width(w), height(h), resolution(resolution), grid(grid) {}
 
-    Map::Map(string filepath, double w, double h, double dl) : width(w), height(h), dl(dl) {
+    Map::Map(string filepath, double w, double h, double resolution) : width(w), height(h), resolution(resolution) {
         grid.load(filepath);
+    }
+
+    Map::Map(const OccupancyGrid &map) : width(map.info.width), height(map.info.height), resolution(map.info.resolution) {
+
+        grid = mat(width,height,arma::fill::zeros);
+
+        for (int r = 0; r<width; r++){
+            for (int c = 0; c<height; c++){
+                grid(r,c) = (double)map.data[r*width + c];
+            }
+        }
+
     }
 
     mat Map::get_grid(){
@@ -325,6 +337,30 @@ namespace planner{
 
         std::reverse(smooth_path.begin(),smooth_path.end());
         return smooth_path;
+    }
+
+    bool Map::valid_path(const vector<pair<double,double>> &path, const vector<double> &TEB){
+        double epsilon = *min_element(TEB.begin(),TEB.end());
+
+        // iterate through path checking for line of sight
+        for (int i = 1; i < path.size(); i++){
+
+            double x0 = path[i-1].first;
+            double y0 = path[i-1].second;
+            double x1 = path[i].first;
+            double y1 = path[i].second;
+
+            vector<pair<double,double>> line = interpolate(x0,y0,x1,y1,epsilon);
+
+            for (auto point : line){
+                if (!is_valid(point.first,point.second,TEB)){
+                    return false;
+                }
+            }
+            
+        }
+
+        return true;
     }
 
 }
