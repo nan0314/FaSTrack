@@ -1,3 +1,6 @@
 [submodule "offline/optimized_dp"]
 	path = offline/optimized_dp
 	url = https://github.com/SFU-MARS/optimized_dp.git
+[submodule "online/src/controller/include/trajectories"]
+	path = online/src/controller/include/trajectories
+	url = https://github.com/tobiaskunz/trajectories.git

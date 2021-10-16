@@ -4,6 +4,8 @@ project(controller)
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -13,6 +15,14 @@ find_package(catkin REQUIRED COMPONENTS
   roslib
   rospy
 )
+
+find_package(cmake_modules REQUIRED)
+find_package(Eigen 3 QUIET)
+if(NOT Eigen_FOUND)
+  include(${PROJ_SOURCE_DIR}/cfg/FindEigen3.cmake)
+  set(Eigen_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR})
+endif()
+include_directories(${Eigen_INCLUDE_DIR})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -104,10 +114,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+ INCLUDE_DIRS include 
 #  LIBRARIES controller
-#  CATKIN_DEPENDS catch_ros roscpp roslib rospy
-#  DEPENDS system_lib
+ CATKIN_DEPENDS catch_ros roscpp roslib rospy
+ DEPENDS EIGEN3
 )
 
 ###########
@@ -117,14 +127,16 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/controller.cpp
-# )
+add_library(trajectories
+  include/trajectories/Path.cpp
+  include/trajectories/Trajectory.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -148,6 +160,8 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
+  trajectories
+  ${EIGEN_INCLUDE_DIRS}
   ${catkin_LIBRARIES}
 )
 
@@ -180,11 +194,11 @@ target_link_libraries(${PROJECT_NAME}_node
 # )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/trajectories/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES

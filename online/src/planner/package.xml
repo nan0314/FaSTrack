@@ -57,6 +57,7 @@
   <exec_depend>rospy</exec_depend>
   <depend>catch_ros</depend>
   <depend>roslib</depend>
+  <depend>eigen</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
