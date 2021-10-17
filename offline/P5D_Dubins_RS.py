@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import yaml
+
 # add optimized_dp to python path
 from optimized_dp.dynamics.DubinsCar4D2 import DubinsCar4D2
 import sys
@@ -13,6 +15,8 @@ from Shapes.ShapesFunctions import *
 
 # Specify the  file that includes dynamic systems
 from dynamics.P5D_Dubins_Rel import *
+from deriv.gradient5D import Gradient5D
+
 
 # Plot options
 from plot_options import *
@@ -27,14 +31,34 @@ from proj import *
 from solver import HJSolver
 import math
 
-gN = np.array([40,30,20,20])
-gMin = np.array([-0.5,-math.pi,0,-8])
-gMax = np.array([0.5,math.pi,4,8])
+gN = np.array([50, 50, 30, 20, 20])
+gMin = np.array([-1.0, -1.0, -math.pi, 0,-8])
+gMax = np.array([1.0, 1.0, math.pi, 3,8])
 
-g = Grid(np.array([-1.0, -1.0, -math.pi, 0,-8]), np.array([1.0, 1.0, math.pi, 3,8]), 5, np.array([50, 50, 30, 20, 20]), [2])
+g = Grid(gMin, gMax, 5, gN, [2])
 
 # Define my object
-my_car = P5D_Dubins_Rel()
+x0 = [3,3,0,0,0]
+
+uMin=[-0.5,-6]
+uMax=[0.5,6]
+
+pMin=[-1.5]
+pMax=[1.5]
+
+dMin=[-0.02,-0.02,0,-0.02,-0.2]
+dMax=[0.02,0.02,0,0.02,0.2]
+
+v=0.1
+dims=[0,1,2,3,4]
+uMode="min"
+dMode="max"
+
+dynamics = P5D_Dubins_Rel(x0,uMin,uMax,pMin,pMax,dMin,dMax,v,dims,uMode,dMode)
+dynamic_attributes = {"x0" : x0, "uMin" : uMin,"uMax" : uMax, "pMin" : pMin, "pMax" : pMax, "v" : v, "gN" : gN.tolist(), "gMin" : gMin.tolist(), "gMax" : gMax.tolist()}
+
+with open("../online/src/controller/config/dynamic_attributes.yaml", "w") as fh:  
+  yaml.dump(dynamic_attributes, fh)
 
 # Use the grid to initialize initial value function
 data0 = np.zeros(g.pts_each_dim)
@@ -48,14 +72,25 @@ tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)  # ti
 
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-po = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,2],
+po = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2],
                   slicesCut=[19])
 
-thresh = 0.01
+thresh = 0.035
 compMethods = { "PrevSetsMode": "minVWithVInit"}
-data = HJSolver(my_car, g, data0, tau, compMethods, po,accuracy="low",convergeThresh=thresh)
+data = HJSolver(dynamics, g, data0, tau, compMethods, po,accuracy="low",convergeThresh=thresh)
 
-# TEB = np.sqrt(np.min((data)))*(1+5*thresh)
-# print(TEB)
+TEB = np.sqrt(np.min((data)))*(1+5*thresh)
 
-# print(computGradient(g,data).asnumpy())
+deriv1 = hcl.asarray(np.zeros(data.shape))
+deriv2 = hcl.asarray(np.zeros(data.shape))
+deriv3 = hcl.asarray(np.zeros(data.shape))
+deriv4 = hcl.asarray(np.zeros(data.shape))
+deriv5 = hcl.asarray(np.zeros(data.shape))
+computeGradient = Gradient5D(g)
+computeGradient(hcl.asarray(data),deriv1,deriv2,deriv3,deriv4,deriv5)
+spat_derivs = [deriv1.asnumpy(),deriv2.asnumpy(),deriv3.asnumpy(),deriv4.asnumpy(),deriv5.asnumpy()]
+for i in range(len(spat_derivs)):
+    filepath = "../online/src/controller/config/deriv" + str(i) + ".csv"
+    np.savetxt(filepath, spat_derivs[i].T.flatten(), delimiter=",")
+
+# print(spat_derivs[0][0,0,0,0,0])

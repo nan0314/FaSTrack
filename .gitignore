@@ -1,3 +1,4 @@
+*.csv
 __pycache__/
 P3D_Q2D_RS.m
 .vscode

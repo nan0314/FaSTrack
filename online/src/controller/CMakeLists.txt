@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
 )
 
+find_package(Armadillo REQUIRED)
 find_package(cmake_modules REQUIRED)
 find_package(Eigen 3 QUIET)
 if(NOT Eigen_FOUND)
@@ -130,12 +131,17 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN_INCLUDE_DIRS}
+  ${ARMADILLO_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
 add_library(trajectories
   include/trajectories/Path.cpp
   include/trajectories/Trajectory.cpp
+)
+
+add_library(controller
+  src/P5Dubins.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -160,10 +166,13 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
+  controller
   trajectories
   ${EIGEN_INCLUDE_DIRS}
   ${catkin_LIBRARIES}
+  ${ARMADILLO_LIBRARIES}
 )
+
 
 #############
 ## Install ##

@@ -36,13 +36,15 @@ class P5D_Dubins_Rel:
         in1 = hcl.scalar(0, "in2")
         in2 = hcl.scalar(0, "in3")
         in3 = hcl.scalar(0, "in4")
-        with hcl.if_(spat_deriv[2] >= 0):
-            with hcl.if_(self.uMode == "min"):
+        with hcl.if_(self.uMode == "min"):
+            with hcl.if_(spat_deriv[3] >= 0):
                 opt_a[0] = hcl.scalar(self.uMin[0], "opt_a")
+            with hcl.if_(spat_deriv[4] >= 0):
                 opt_alpha[0] = hcl.scalar(self.uMin[1], "opt_alpha")
-        with hcl.elif_(spat_deriv[2] < 0):
-            with hcl.if_(self.uMode == "max"):
+        with hcl.if_(self.uMode == "max"):
+            with hcl.if_(spat_deriv[3] < 0):
                 opt_a[0] = hcl.scalar(self.uMin[0], "opt_a")
+            with hcl.if_(spat_deriv[4] < 0):
                 opt_alpha[0] = hcl.scalar(self.uMin[1], "opt_alpha")
         return (in1[0],in2[0],in3[0],opt_a[0],opt_alpha[0])
 
