@@ -1,37 +1,16 @@
 #include <ros/ros.h>
 #include <ros/package.h>
-#include <iostream>
-#include <cstdio>
-#include <Eigen/Core>
-#include "controller/P5Dubins.hpp"
+#include "dynamics/dynamics.hpp"
 #include "nav_msgs/Path.h"
-#include "trajectories/Path.h"
-#include "trajectories/Trajectory.h"
+#include "std_msgs/Float64.h"
 #include "visualization_msgs/Marker.h"
 #include "visualization_msgs/MarkerArray.h"
 
-static nav_msgs::Path path;
-static bool path_recieved;
-static bool arrived;
+static double u;
 
-// void path_callback(const nav_msgs::Path& msg){
-
-//   if (path.poses.size() != msg.poses.size()){
-//     path = msg;
-//     path_recieved = true;
-//     arrived = false;
-//   } else if (msg.poses.size() > 0){
-//     for (int i = 0; i < msg.poses.size(); i++){
-//       if (msg.poses[i].pose.position.x != path.poses[i].pose.position.x){
-//         path = msg;
-//         path_recieved = true;
-//         arrived = false;
-//         break;
-//       }
-//     }
-//   }   
-
-// }
+void control_callback(const std_msgs::Float64& msg){
+  u = msg.data;
+}
 
 int main(int argc, char **argv)
 {
@@ -40,26 +19,34 @@ int main(int argc, char **argv)
     using visualization_msgs::Marker;
     using visualization_msgs::MarkerArray;
     using arma::vec;
-    using namespace std;
-    using namespace Eigen;
+    using dynamics::Dubins;
+    using dynamics::Q2D;
 
-    // initialize node/node handles
-    ros::init(argc, argv, "controller_node");
+    ros::init(argc, argv, "dynamics_node");
     ros::NodeHandle n;
 
     // publishers and subscribers
     ros::Publisher pose_pub = n.advertise<MarkerArray>("/pose", 10,true);
-    // ros::Subscriber path_sub = n.subscribe("path", 10, path_callback);
+    ros::Subscriber control_sub = n.subscribe("control", 10, control_callback);
 
     // ROS parameters
+    vector<double> x0;
     vector<double> model_size;
     vector<double> B;
+    double v;
     string frame_id;
 
+    n.getParam("x0",x0);
+    n.getParam("v",v);
     n.getParam("model_size", model_size);
     n.getParam("B", B);
     n.getParam("frame_id",frame_id);
 
+    // initialize model
+    Dubins tracker(v, x0[0],x0[1],x0[2]);
+    vec state = tracker.get_state();
+    u = 0;
+    // Q2D planner(x0[0],x0[1]);
 
     // initialize messages
     MarkerArray pose_msg;
@@ -69,8 +56,8 @@ int main(int argc, char **argv)
     vehicle.header.frame_id = frame_id;
     vehicle.id = 0;
     vehicle.type = 1;
-    vehicle.pose.position.x = 3;
-    vehicle.pose.position.y = 3;
+    vehicle.pose.position.x = x0[0];
+    vehicle.pose.position.y = x0[1];
     vehicle.scale.x = model_size[0];
     vehicle.scale.y = model_size[1];
     vehicle.scale.z = 0.05;
@@ -92,15 +79,21 @@ int main(int argc, char **argv)
     TEB.color.a = 0.5;
     
     // set publishing frequency
-    ros::Rate loop_rate(10);
+    int hz = 50;
+    ros::Rate loop_rate(hz);
 
-    double dt = 0.1;
-    arrived = true;
 
     int count = 0;
     while (ros::ok())
     {
         ros::spinOnce();
+
+        state = tracker.dynamics(u,1./hz);
+
+        vehicle.pose.position.x = state(0);
+        vehicle.pose.position.y = state(1);
+        TEB.pose = vehicle.pose;
+
 
         pose_msg.markers = {vehicle,TEB};
         pose_pub.publish(pose_msg);
@@ -109,7 +102,4 @@ int main(int argc, char **argv)
         loop_rate.sleep();
         ++count;
   }
-
-
-  return 0;
 }

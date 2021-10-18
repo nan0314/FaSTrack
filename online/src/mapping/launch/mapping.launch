@@ -8,7 +8,7 @@
   <node name="rviz" pkg="rviz" type="rviz" args="$(arg rviz_arg)" />
 
 
-  <include file="$(find controller)/launch/controller.launch" />
+  <include file="$(find dynamics)/launch/dynamics.launch" />
 
 
 </launch>

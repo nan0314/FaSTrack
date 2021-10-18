@@ -72,10 +72,13 @@ dMin = [0,0]
 # initial state
 x0 = [0,0,0]
 
+# constant velocity
+v = 1
+
 # create relative dynamics
-dynamics = P3D_Q2D_Rel(x0,uMin,uMax,pMin,pMax,dMin,dMax)
-dynamic_attributes = {"x0" : x0, "uMin" : [uMin],"uMax" : [uMax], "pMin" : pMin, "pMax" : pMax}
-with open("../online/src/controller/config/dynamic_attributes.yaml", "w") as fh:  
+dynamics = P3D_Q2D_Rel(x0,uMin,uMax,pMin,pMax,dMin,dMax,v)
+dynamic_attributes = {"v" : v, "uMin" : [uMin],"uMax" : [uMax], "pMin" : pMin, "pMax" : pMax}
+with open("../online/src/dynamics/config/dynamic_params.yaml", "w") as fh:  
   yaml.dump(dynamic_attributes, fh)
 
 ## Other Parameters
@@ -99,7 +102,7 @@ data = HJSolver(dynamics, g, target, tau, compMethods, po2,0.05,"medium") # The 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 surf = ax.plot_surface(g2D.vs[0], g2D.vs[1], np.sqrt(data02D), rstride=1, cstride=1, antialiased=True)
-plt.show()
+# plt.show()
 
 # Get TEB
 TEB = np.min(np.sqrt(data))+small_number
@@ -112,7 +115,7 @@ deriv3 = hcl.asarray(np.zeros(data.shape))
 computeGradient = Gradient3D(g)
 computeGradient(hcl.asarray(data),deriv1,deriv2,deriv3)
 spat_derivs = [deriv1.asnumpy(),deriv2.asnumpy(),deriv3.asnumpy()]
-print(spat_derivs[0][2,0,0])
+# print(spat_derivs[0][2,0,0])
 for i in range(len(spat_derivs)):
     filepath = "../online/src/controller/config/deriv" + str(i) + ".csv"
     np.savetxt(filepath, spat_derivs[i].T.flatten(), delimiter=",")

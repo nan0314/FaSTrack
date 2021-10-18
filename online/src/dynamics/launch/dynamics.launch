@@ -1,0 +1,8 @@
+<launch>
+
+  <rosparam file="$(find dynamics)/config/sim_params.yaml" />
+  <rosparam file="$(find dynamics)/config/dynamic_params.yaml"/>
+
+  <node pkg="dynamics" name="dynamcis_node" type="dynamics_node" output="screen"/>
+
+</launch>
