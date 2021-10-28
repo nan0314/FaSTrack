@@ -35,6 +35,37 @@ namespace dynamics{
         return out;
     }
 
+
+    /**********************
+     * Plane_5D Functions
+     **********************/
+
+    Plane_5D::Plane_5D(const double &x, const double &y, const double &theta, const double &v, const double &omega)
+        : x(x), y(y), theta(theta), v(v), omega(omega) {};
+
+    vec Plane_5D::dynamics(vector<double> u, double dt){
+        
+        double xdot = v*cos(theta);
+        double ydot = v*sin(theta);
+        double theta_dot = omega;
+        double a = u[0];
+        double alpha = u[1];
+
+        x += xdot * dt;
+        y += ydot * dt;
+        theta += theta_dot * dt;
+        v += a * dt;
+        omega += alpha * dt;
+
+        vec out = {x,y,theta,v,omega};
+        return out;
+    }
+
+    vec Plane_5D::get_state(){
+        vec out = {x,y,theta,v,omega};
+        return out;
+    }
+
     /*******************
      * Q2D Functions
      ******************/
@@ -61,6 +92,11 @@ namespace dynamics{
     vec Q2D::get_state(){
         vec out = {x,y};
         return out;
+    }
+
+    void Q2D::set_state(vec p){
+        x = p(0);
+        y = p(1);
     }
 
 

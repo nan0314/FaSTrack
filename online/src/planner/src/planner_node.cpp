@@ -17,9 +17,9 @@ void map_callback(const nav_msgs::OccupancyGrid& msg){
 
 }
 
-void pose_callback(const visualization_msgs::MarkerArray &msg){
+void pose_callback(const visualization_msgs::Marker &msg){
 
-    pose = msg.markers[0].pose;
+    pose = msg.pose;
 }
 
 
@@ -52,6 +52,7 @@ int main(int argc, char **argv)
     vector<double> goal;
     vector<double> model_size;
     vector<double> B;
+    vector<double> x0;
     string frame_id;
 
     n.getParam("width",w);
@@ -61,6 +62,7 @@ int main(int argc, char **argv)
     n.getParam("model_size", model_size);
     n.getParam("B", B);
     n.getParam("frame_id",frame_id);
+    n.getParam("x0",x0);
 
     arma::mat init(w,h,arma::fill::zeros);
     Map map(init,w,h,resolution);
@@ -98,7 +100,7 @@ int main(int argc, char **argv)
               ROS_WARN_STREAM("END LOCATION IS INVALID!");
             }
 
-            path = map.rrt_connect({pose.position.x,pose.position.y},end,TEB,5000);
+            path = map.rrt_connect({x0[0],x0[0]},end,TEB,5000);
             path_msg = nav_path(path,frame_id);
 
             if (path.size() == 0){

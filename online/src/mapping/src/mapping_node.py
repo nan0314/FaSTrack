@@ -5,7 +5,7 @@ import rospkg
 from geometry_msgs.msg import Pose
 from nav_msgs.msg import Path
 from nav_msgs.msg import OccupancyGrid
-from visualization_msgs.msg import MarkerArray
+from visualization_msgs.msg import Marker
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -20,7 +20,7 @@ def pose_callback(msg):
     global pose
     global pose_bool
 
-    pose = msg.markers[0].pose
+    pose = msg.pose
     pose_bool = True
 
 
@@ -34,7 +34,7 @@ def mapping():
 
     # publishers and subscribers
     map_pub = rospy.Publisher('map', OccupancyGrid, queue_size=10)
-    rospy.Subscriber("pose", MarkerArray, pose_callback)
+    rospy.Subscriber("pose", Marker, pose_callback)
 
 
     # ros params

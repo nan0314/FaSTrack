@@ -38,7 +38,7 @@ gMax = np.array([1.0, 1.0, math.pi, 3,8])
 g = Grid(gMin, gMax, 5, gN, [2])
 
 # Define my object
-x0 = [3,3,0,0,0]
+x0 = [0,0,0,0,0]
 
 uMin=[-0.5,-6]
 uMax=[0.5,6]
@@ -75,8 +75,8 @@ tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 po = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2],
                   slicesCut=[19])
 
-thresh = 0.035
-compMethods = { "PrevSetsMode": "minVWithVInit"}
+thresh = 0.1
+compMethods = { "PrevSetsMode": "maxVWithV0"}
 data = HJSolver(dynamics, g, data0, tau, compMethods, po,accuracy="low",convergeThresh=thresh)
 
 TEB = np.sqrt(np.min((data)))*(1+5*thresh)
@@ -89,8 +89,8 @@ deriv5 = hcl.asarray(np.zeros(data.shape))
 computeGradient = Gradient5D(g)
 computeGradient(hcl.asarray(data),deriv1,deriv2,deriv3,deriv4,deriv5)
 spat_derivs = [deriv1.asnumpy(),deriv2.asnumpy(),deriv3.asnumpy(),deriv4.asnumpy(),deriv5.asnumpy()]
-for i in range(len(spat_derivs)):
-    filepath = "../online/src/controller/config/deriv" + str(i) + ".csv"
-    np.savetxt(filepath, spat_derivs[i].T.flatten(), delimiter=",")
+# for i in range(len(spat_derivs)):
+#     filepath = "../online/src/controller/config/deriv" + str(i) + ".csv"
+#     np.savetxt(filepath, spat_derivs[i].T.flatten(), delimiter=",")
 
-# print(spat_derivs[0][0,0,0,0,0])
+print(np.max(spat_derivs[4]))

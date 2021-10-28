@@ -11,19 +11,14 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   catch_ros
+  dynamics
   roscpp
   roslib
   rospy
+  tf2_ros
 )
 
 find_package(Armadillo REQUIRED)
-find_package(cmake_modules REQUIRED)
-find_package(Eigen 3 QUIET)
-if(NOT Eigen_FOUND)
-  include(${PROJ_SOURCE_DIR}/cfg/FindEigen3.cmake)
-  set(Eigen_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR})
-endif()
-include_directories(${Eigen_INCLUDE_DIR})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -117,8 +112,8 @@ include_directories(${Eigen_INCLUDE_DIR})
 catkin_package(
  INCLUDE_DIRS include 
 #  LIBRARIES controller
- CATKIN_DEPENDS catch_ros roscpp roslib rospy
- DEPENDS EIGEN3
+ CATKIN_DEPENDS catch_ros dynamics roscpp roslib rospy tf2_ros
+#  DEPENDS EIGEN3
 )
 
 ###########
@@ -130,19 +125,13 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN_INCLUDE_DIRS}
   ${ARMADILLO_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-add_library(trajectories
-  include/trajectories/Path.cpp
-  include/trajectories/Trajectory.cpp
-)
-
-add_library(controller
-  src/P5Dubins.cpp
-)
+# add_library(controller
+#   src/P5Dubins.cpp
+# )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -166,9 +155,7 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
-  controller
-  trajectories
-  ${EIGEN_INCLUDE_DIRS}
+  dynamics
   ${catkin_LIBRARIES}
   ${ARMADILLO_LIBRARIES}
 )

@@ -5,4 +5,6 @@
 
   <node pkg="dynamics" name="dynamcis_node" type="dynamics_node" output="screen"/>
 
+  <include file="$(find controller)/launch/controller.launch" />
+
 </launch>

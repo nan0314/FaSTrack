@@ -12,10 +12,12 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   roslib
   rospy
+  tf2_ros
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+
 find_package(Armadillo REQUIRED)
 
 
@@ -107,7 +109,7 @@ find_package(Armadillo REQUIRED)
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES dynamics
- CATKIN_DEPENDS catch_ros roscpp roslib rospy
+ CATKIN_DEPENDS catch_ros roscpp roslib rospy tf2_ros
 #  DEPENDS system_lib
 )
 

@@ -26,6 +26,24 @@ namespace dynamics{
 
     };
 
+    class Plane_5D{
+
+        double x;
+        double y;
+        double theta;
+        double v;
+        double omega;
+
+        public:
+
+        Plane_5D(const double &x, const double &y, const double &theta, const double &v, const double &omega);
+
+        vec dynamics(vector<double> u, double dt);
+
+        vec get_state();
+
+    };
+
 
     class Q2D{
 
@@ -39,6 +57,8 @@ namespace dynamics{
         vec dynamics(vector<double> u, double dt);
 
         vec get_state();
+
+        void set_state(vec p);
     };
 
 }
