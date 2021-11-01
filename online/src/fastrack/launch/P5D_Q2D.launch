@@ -1,0 +1,17 @@
+<launch>
+
+  <rosparam file="$(find fastrack)/config/sim_params.yaml" />
+  <rosparam file="$(find fastrack)/config/TEB_params.yaml" />
+  <rosparam file="$(find planner)/config/plan_params.yaml" />
+  <rosparam file="$(find mapping)/config/map_attributes.yaml" />
+  <rosparam file="$(find dynamics)/config/P5D_Q2D/dynamic_params.yaml"/>
+  <rosparam file="$(find controller)/config/P5D_Q2D/grid_params.yaml" />
+  <rosparam file="$(find controller)/config/P5D_Q2D/spat_derivs.yaml" />
+  
+  <node pkg="planner" name="planner_node" type="planner_node" output="screen"/>
+  <node pkg="mapping" name="mapping_node" type="mapping_node.py" output="screen"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find planner)/config/default.rviz" />
+  <node pkg="dynamics" name="dynamcis_node" type="P5D_Q2D_dynamics_node" output="screen"/>
+  <node pkg="controller" name="controller_node" type="P5D_Q2D_controller_node" output="screen"/>
+
+</launch>

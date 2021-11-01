@@ -32,8 +32,8 @@ import math
 ## Grid and Cost
 gN = [20, 20, 15, 10, 15]  # number of grid points (more grid points --> better results,
 #    but slower computation)
-gMin = [-0.35, -0.35, -np.pi, -0.25, -3.75]
-gMax = [ 0.35,  0.35,  np.pi,  0.25,  3.75]
+gMin = [-2, -2, -np.pi, -1., -3.75]
+gMax = [ 2, 2,  np.pi,  1.,  3.75]
 
 # create grid with 3rd dimension periodic
 g = Grid(np.array(gMin), np.array(gMax), len(gN), np.array(gN), [2])
@@ -41,7 +41,7 @@ g = Grid(np.array(gMin), np.array(gMax), len(gN), np.array(gN), [2])
 # define cost (aka target) function l(x)
 # cost is distance to origin (quadratic because derivatives are smoother)
 target = np.zeros(g.pts_each_dim)
-target += np.power(g.vs[0],2) + np.power(g.vs[1],2)
+target += np.sqrt(np.power(g.vs[0],2) + np.power(g.vs[1],2))
 
 ## dynamic system
 
@@ -49,13 +49,13 @@ target += np.power(g.vs[0],2) + np.power(g.vs[1],2)
 x0=[0,0,0,0,0]
 
 # acceleration bounds
-aRange = [-0.15,0.15]
+aRange = [-1.,1.]
 
 # angular acceleration bounds
-alphaMax = 3
+alphaMax = 2.5
 
 # planning bounds
-pMax  = [0.25,0.25]
+pMax  = [0.5,0.5]
 
 # disturbance bounds
 dMax = [0.02, 0.02, 0, 0.02, 0.02]
@@ -63,17 +63,17 @@ dMax = [0.02, 0.02, 0, 0.02, 0.02]
 # create relative dynamics
 dynamics = P5D_2D_Rel()
 dynamic_attributes = { "aRange" : aRange, "alphaMax" : alphaMax, "pMax" : pMax}
-with open("../online/src/dynamics/config/dynamic_params.yaml", "w") as fh:  
+with open("../online/src/dynamics/config/P5D_Q2D/dynamic_params.yaml", "w") as fh:  
   yaml.dump(dynamic_attributes, fh)
 
 grid_attributes = {"gN" : gN, "gMin" : gMin, "gMax" : gMax}
-with open("../online/src/controller/config/grid_params.yaml", "w") as fh:  
+with open("../online/src/controller/config/P5D_Q2D/grid_params.yaml", "w") as fh:  
   yaml.dump(grid_attributes, fh)
 
 ## Other Parameters
 
 # backward timing
-lookback_length = 25
+lookback_length = 40
 t_step = 0.1
 small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)  # time stamps
@@ -82,7 +82,7 @@ po2 = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2],
                   slicesCut=[])
 
 # Converge Parameters
-thresh = 0.05
+thresh = 0.04
 
 # in FaSTrack we want to take the max with the cost function l(x) over time
 compMethods = { "PrevSetsMode": "maxVWithV0"}
@@ -91,7 +91,7 @@ data = HJSolver(dynamics, g, target, tau, compMethods, po2, accuracy="low", conv
 
 
 # Get TEB
-TEB = np.min(np.sqrt(data)) * (1 + 3*thresh)
+TEB = np.min(data) * (1 + 3*thresh)
 print(TEB)
 
 deriv1 = hcl.asarray(np.zeros(data.shape))
@@ -102,14 +102,9 @@ deriv5 = hcl.asarray(np.zeros(data.shape))
 computeGradient = Gradient5D(g)
 computeGradient(hcl.asarray(data),deriv1,deriv2,deriv3,deriv4,deriv5)
 spat_derivs = [deriv1.asnumpy(),deriv2.asnumpy(),deriv3.asnumpy(),deriv4.asnumpy(),deriv5.asnumpy()]
-# print(np.max(spat_derivs[4]))
 
-deriv_dict = {"deriv3" : spat_derivs[3].flatten().tolist()}
-with open("../online/src/controller/config/spat_derivs3.yaml", "w") as fh:  
-  yaml.dump(deriv_dict, fh)
-
-deriv_dict = {"deriv4" : spat_derivs[4].flatten().tolist()}
-with open("../online/src/controller/config/spat_derivs4.yaml", "w") as fh:  
+deriv_dict = {"deriv3" : spat_derivs[3].flatten().tolist() , "deriv4" : spat_derivs[4].flatten().tolist()}
+with open("../online/src/controller/config/P5D_Q2D/spat_derivs.yaml", "w") as fh:  
   yaml.dump(deriv_dict, fh)
 
 # for i in range(len(spat_derivs)):

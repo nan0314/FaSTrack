@@ -52,9 +52,9 @@ class P5D_2D_Rel:
 
         with hcl.if_(self.dMode == "max"):
             with hcl.if_(spat_deriv[0]<0):
-                d0[0] = hcl.scalar(-self.dMax[0] - self.pMax[0],"d0")
+                d0[0] = hcl.scalar(-self.dMax[0] + self.pMax[0],"d0")
             with hcl.if_(spat_deriv[1]<0):
-                d1[0] = hcl.scalar(-self.dMax[1] - self.pMax[1],"d1")
+                d1[0] = hcl.scalar(-self.dMax[1] + self.pMax[1],"d1")
             with hcl.if_(spat_deriv[3]<0):
                 d3[0] = hcl.scalar(-self.dMax[3],"d3")
             with hcl.if_(spat_deriv[4]<0):
@@ -62,9 +62,9 @@ class P5D_2D_Rel:
 
         with hcl.if_(self.dMode == "min"):
             with hcl.if_(spat_deriv[0]>=0):
-                d0[0] = hcl.scalar(-self.dMax[0] - self.pMax[0],"d0")
+                d0[0] = hcl.scalar(-self.dMax[0] + self.pMax[0],"d0")
             with hcl.if_(spat_deriv[1]>=0):
-                d1[0] = hcl.scalar(-self.dMax[1] - self.pMax[1],"d1")
+                d1[0] = hcl.scalar(-self.dMax[1] + self.pMax[1],"d1")
             with hcl.if_(spat_deriv[3]>=0):
                 d3[0] = hcl.scalar(-self.dMax[3],"d3")
             with hcl.if_(spat_deriv[4]>=0):

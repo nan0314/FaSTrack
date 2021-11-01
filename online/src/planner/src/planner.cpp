@@ -122,7 +122,7 @@ namespace planner{
     bool Map::new_config(Node* q, Node* q_near, Node* &q_new, const vector<double> &TEB){
         
         // make q_new by propogating from q_near toward q
-        double epsilon = *min_element(TEB.begin(),TEB.end());
+        double epsilon = *min_element(TEB.begin(),TEB.end())*1.9;
         double dist = q_near->distance(q);
 
         double dx = (q->x - q_near->x) * epsilon/dist;
@@ -183,7 +183,7 @@ namespace planner{
 
     string Map::extend(vector<Node*> &tree, Node* q, Node* &q_new, const vector<double> &TEB){
 
-        double epsilon = *min_element(TEB.begin(),TEB.end());
+        double epsilon = *min_element(TEB.begin(),TEB.end())*1.9;
 
         Node* q_near = nearest_neighbor(tree,q);
         
@@ -306,7 +306,7 @@ namespace planner{
     vector<pair<double,double>> Map::smooth(const vector<pair<double,double>> &path, const vector<double> &TEB){
 
         vector<pair<double,double>> smooth_path = {path[0]};
-        double epsilon = *min_element(TEB.begin(),TEB.end());
+        double epsilon = *min_element(TEB.begin(),TEB.end())*1.5;
 
         // set up smoothing points
         pair<double,double> current = path[0];  // current smoothing vertex
@@ -340,7 +340,7 @@ namespace planner{
     }
 
     bool Map::valid_path(const vector<pair<double,double>> &path, const vector<double> &TEB){
-        double epsilon = *min_element(TEB.begin(),TEB.end());
+        double epsilon = *min_element(TEB.begin(),TEB.end())*1.9;
 
         // iterate through path checking for line of sight
         for (int i = 1; i < path.size(); i++){

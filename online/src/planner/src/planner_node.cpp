@@ -100,7 +100,7 @@ int main(int argc, char **argv)
               ROS_WARN_STREAM("END LOCATION IS INVALID!");
             }
 
-            path = map.rrt_connect({x0[0],x0[0]},end,TEB,5000);
+            path = map.rrt_connect({pose.position.x,pose.position.y},end,TEB,5000);
             path_msg = nav_path(path,frame_id);
 
             if (path.size() == 0){

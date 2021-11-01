@@ -31,10 +31,10 @@ def rect_obstacle(x1,x2,y1,y2,map,num=100):
 map = np.zeros((500,500))
 
 # map attributes
-attributes = {"width" : 25, "height" : 25, "dl" : 25/map.shape[0]}
+attributes = {"width" : map.shape[0], "height" : map.shape[1], "resolution" : 10./map.shape[0], "r" : 2}
 
 # Add obstacles
-circle_obstacle(250,250,100,map)
+circle_obstacle(250,250,80,map)
 
 rect_obstacle(70,170,100,120,map)
 
@@ -45,7 +45,7 @@ rect_obstacle(370,470,324,336,map)
 rect_obstacle(420-6,426,280,380,map)
 
 imgplot = plt.imshow(map,cmap=None)
-# plt.show()
+plt.show()
 
 np.savetxt("../online/src/mapping/config/map.csv", map.T, delimiter=",")
 with open("../online/src/mapping/config/map_attributes.yaml", "w") as fh:  

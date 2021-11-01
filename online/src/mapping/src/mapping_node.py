@@ -61,10 +61,10 @@ def mapping():
     while not rospy.is_shutdown():
 
         if pose_bool:
-            xlow = round(max(0,(pose.position.x - r)/resolution))
-            xhigh = round(min(width-1,(pose.position.x + r)/resolution))
-            ylow = round(max(0,(pose.position.y - r)/resolution))
-            yhigh = round(min(height-1,(pose.position.y + r)/resolution))
+            ylow = round(max(0,(pose.position.x - r)/resolution))
+            yhigh = round(min(width-1,(pose.position.x + r)/resolution))
+            xlow = round(max(0,(pose.position.y - r)/resolution))
+            xhigh = round(min(height-1,(pose.position.y + r)/resolution))
 
             percieved_map[xlow:xhigh,ylow:yhigh] = map[xlow:xhigh,ylow:yhigh]
             pose_bool = False

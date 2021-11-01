@@ -1,9 +1,8 @@
 <launch>
 
-  <rosparam file="$(find controller)/config/grid_params.yaml" />
-  <rosparam file="$(find controller)/config/spat_derivs.yaml" />
-  <!-- <rosparam file="$(find controller)/config/spat_derivs4.yaml" /> -->
+  <rosparam file="$(find controller)/config/P3D_Q2D/grid_params.yaml" />
 
-  <node pkg="controller" name="controller_node" type="controller_node" output="screen"/>
+  <rosparam file="$(find controller)/config/P3D_Q2D/spat_derivs.yaml" />
+  <node pkg="controller" name="controller_node" type="P3D_Q2D_controller_node" output="screen"/>
 
 </launch>

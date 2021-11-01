@@ -8,6 +8,11 @@ namespace dynamics{
     using std::cout;
     using std::endl;
 
+    double normalize_angle(double rad){
+        auto rem = atan2(sin(rad),cos(rad));
+        return rem;
+    }
+
 
     /**********************
      * Dubins Functions
@@ -23,6 +28,7 @@ namespace dynamics{
         x += xdot*dt;
         y += ydot*dt;
         theta += omega*dt;
+        theta = normalize_angle(theta);
 
         vec out = {x,y,theta};
         return out;
@@ -54,8 +60,17 @@ namespace dynamics{
         x += xdot * dt;
         y += ydot * dt;
         theta += theta_dot * dt;
+        theta = normalize_angle(theta);
         v += a * dt;
         omega += alpha * dt;
+
+        if (fabs(v) > 1.){
+            v = v/fabs(v);
+        }
+
+        if (fabs(omega) > 3.75){
+            omega = omega/fabs(omega)*3.75;
+        }
 
         vec out = {x,y,theta,v,omega};
         return out;
