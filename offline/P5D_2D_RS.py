@@ -49,10 +49,10 @@ target += np.sqrt(np.power(g.vs[0],2) + np.power(g.vs[1],2))
 x0=[0,0,0,0,0]
 
 # acceleration bounds
-aRange = [-1.,1.]
+aRange = [-2.,2.]
 
 # angular acceleration bounds
-alphaMax = 2.5
+alphaMax = 4
 
 # planning bounds
 pMax  = [0.5,0.5]
@@ -61,7 +61,7 @@ pMax  = [0.5,0.5]
 dMax = [0.02, 0.02, 0, 0.02, 0.02]
 
 # create relative dynamics
-dynamics = P5D_2D_Rel()
+dynamics = P5D_2D_Rel(x0,aRange,alphaMax,pMax,dMax)
 dynamic_attributes = { "aRange" : aRange, "alphaMax" : alphaMax, "pMax" : pMax}
 with open("../online/src/dynamics/config/P5D_Q2D/dynamic_params.yaml", "w") as fh:  
   yaml.dump(dynamic_attributes, fh)
@@ -73,8 +73,8 @@ with open("../online/src/controller/config/P5D_Q2D/grid_params.yaml", "w") as fh
 ## Other Parameters
 
 # backward timing
-lookback_length = 40
-t_step = 0.1
+lookback_length = 500
+t_step = 0.01
 small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)  # time stamps
 
@@ -87,7 +87,7 @@ thresh = 0.04
 # in FaSTrack we want to take the max with the cost function l(x) over time
 compMethods = { "PrevSetsMode": "maxVWithV0"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
-data = HJSolver(dynamics, g, target, tau, compMethods, po2, accuracy="low", convergeThresh=thresh) # The main function to run reachability code
+data = HJSolver(dynamics, g, target, tau, compMethods, po2, accuracy="high", convergeThresh=thresh) # The main function to run reachability code
 
 
 # Get TEB
